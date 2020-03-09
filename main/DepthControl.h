@@ -14,13 +14,13 @@ public:
   DepthControl(void);
 
   // defines the waypoints used for Depth Control
-  void init(const int totalWayPoints_in, double * wayPoints_in, int diveDelay_in, int surfaceDelay_in);
+  void init(const int totalWayPoints_in, double * wayPoints_in, int diveDelay_in);
 
   // sets the vertical motor effort using P-Control when diving
   void dive(z_state_t * state, int currentTime_in);
 
   // sets the vertical motor effort to surface
-  void surface(z_state_t * state, int currentTime_in);
+  void surface(z_state_t * state);
 
   String printString(void);
 
@@ -38,7 +38,7 @@ public:
   float Kp=80.0;     // proportional control gain
   float uV;          // vertical motor effort
 
-  bool diveState = 0;
+  bool diveState = 1;
   bool surfaceState = 0;
   bool atDepth;
   bool atSurface;
@@ -55,7 +55,6 @@ private:
   int currentWayPoint = 0;
   
   int diveDelay;
-  int surfaceDelay;
   int delayStartTime = 0;
   int currentTime;
   bool delayed;

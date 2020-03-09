@@ -17,7 +17,7 @@ MotorDriver::MotorDriver()
 void MotorDriver::init(void) {
   for (int m = 0; m < NUM_MOTORS; m++) {
     analogWrite(motorPins[m][FORWARD_PIN], 1); // this line resets the error flag of motor drivers
-    delay(10); // one of the motor driver input pins is pulled high long enough to reset the EF pin
+    delay(10); // oone of the motor driver input pins is pulled high long enough to reset the EF pin
     analogWrite(motorPins[m][BACKWARD_PIN], 0);
     analogWrite(motorPins[m][FORWARD_PIN], 0);
   }

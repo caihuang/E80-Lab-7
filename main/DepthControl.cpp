@@ -7,7 +7,7 @@ DepthControl::DepthControl(void)
 : DataSource("uV,depth,depth_des","float,float,float"){}
 
 
-void DepthControl::init(const int totalWayPoints_in, double * wayPoints_in, int diveDelay_in, int surfaceDelay_in) {
+void DepthControl::init(const int totalWayPoints_in, double * wayPoints_in, int diveDelay_in) {
   totalWayPoints = totalWayPoints_in;
   // create wayPoints array on the Heap so that it isn't erased once the main Arduino loop starts
   wayPoints = new double[totalWayPoints];
@@ -15,7 +15,6 @@ void DepthControl::init(const int totalWayPoints_in, double * wayPoints_in, int 
     wayPoints[i] = wayPoints_in[i];
   }
   diveDelay = diveDelay_in;
-  surfaceDelay = surfaceDelay_in;
 }
 
 void DepthControl::dive(z_state_t * state, int currentTime_in) {
@@ -27,6 +26,10 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   // Set the value of depth_des, depth, vertical control effort (uV) appropriately for P control
   // You can access the desired depth from the wayPoints array at the index held in currentWayPoint
   // You can access the measured depth calculated in ZStateEstimator.cpp using state->z
+  
+  //////////////////////////////////////////////////////////////////////
+  // write code here
+  //////////////////////////////////////////////////////////////////////
   depth_des = wayPoints[currentWayPoint];
   depth - state->z;
   e = depth_des - depth;
@@ -36,37 +39,29 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   } else if (uV <= -127) {
     uV = -127;
   }
+  
+  ///////////////////////////////////////////////////////////////////////
+  // don't change code past this point
+  ///////////////////////////////////////////////////////////////////////
+
 }
 
-void DepthControl::surface(z_state_t * state, int currentTime_in) {
-  currentTime = currentTime_in;
-  
+void DepthControl::surface(z_state_t * state) {
   depth_des = 0;
   depth = state->z;
 
   String surfaceMessage = "";
   int smTime = 20;
   if (depth - depth_des < DEPTH_MARGIN || delayed) {
-    // surface delay
-    if (delayStartTime == 0) delayStartTime = currentTime;
-    if (currentTime < delayStartTime + surfaceDelay) {
-        delayed = 1;
-        uV = 0;
-        surfaceMessage = "Got to surface, waiting until surface delay is over";
-    }
-    else {
-      delayed = 0;
-      delayStartTime = 0;
-      atSurface = 1;
-      complete = 1;
-      uV = 0;
-      surfaceMessage = "Got to surface. Finished Depth Control";
-      smTime = 10;
-    }
+    atSurface = 1;
+    complete = 1;
+    uV = 0;
+    surfaceMessage = "Got to surface. Finished Depth Control";
+    smTime = 10;
   }
   else { // not at surface yet
     atSurface = 0;
-    uV = -80; // go upward
+    uV = -30; // go upward
   }
   printer.printMessage(surfaceMessage,smTime);
 }
