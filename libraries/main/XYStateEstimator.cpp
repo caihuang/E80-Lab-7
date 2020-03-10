@@ -10,7 +10,7 @@ inline float angleDiff(float a) {
 }
 
 XYStateEstimator::XYStateEstimator(void)
-  : DataSource("x,y","float,float") // from DataSource
+  : DataSource("x,y,yaw","float,float,float") // from DataSource
 {}
 
 void XYStateEstimator::init(void) {
@@ -73,5 +73,6 @@ size_t XYStateEstimator::writeDataBytes(unsigned char * buffer, size_t idx) {
   float * data_slot = (float *) &buffer[idx];
   data_slot[0] = state.x;
   data_slot[1] = state.y;
+  data_slot[2] = state.yaw;
   return idx + 2*sizeof(float);
 }
